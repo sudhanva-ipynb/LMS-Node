@@ -2,7 +2,6 @@ import json
 import concurrent.futures
 import threading
 import time
-from asyncio import timeout
 
 from apscheduler.schedulers.blocking import BlockingScheduler
 
@@ -24,7 +23,7 @@ logging.basicConfig()
 logging.getLogger('apscheduler').setLevel(logging.WARNING)
 def get_random_leader_timeout(node_id):
     random.seed(node_id)
-    return random.randint(200, 400)
+    return random.randint(600, 900)
 
 class MillisecondIntervalTrigger(IntervalTrigger):
     def __init__(self, milliseconds=1000, **kwargs):
@@ -77,7 +76,7 @@ class Timer:
     def leader_timer(self):
         with sqlite3.connect("lms.db") as conn:
             state = node.get_state_info(conn)["state"]
-        if state != "L":
+        if state == "F":
             hb_val  = node.get_heart_beat_tracker()
             if self.last_hb_val == hb_val:
                 print("No Heartbeat Received")
@@ -241,6 +240,9 @@ class Node:
                             self.match_index = get_nxt_match_index(self.nodes, 0)
                             self.leader_append_entries()
                             return True
+                        else:
+                            self.set_state("F")
+                            return False
 
                 except Exception as exc:
                     print(f"RequestVote from {node['id']} generated an exception: {exc}")
@@ -434,10 +436,6 @@ class Node:
                         if acks > ((len(nodes) + 1) // 2):
                             commit = True
                             break
-
-                # Shutdown the executor, canceling pending tasks if needed
-                executor.shutdown(cancel_futures=True)
-
             if commit:
                 return True  # Log replication succeeded with majority
             else:
