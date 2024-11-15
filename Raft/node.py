@@ -241,7 +241,6 @@ class Node:
                             self.leader_append_entries()
                             return True
 
-
                 except Exception as exc:
                     print(f"RequestVote from {node['id']} generated an exception: {exc}")
                     pass
@@ -259,7 +258,7 @@ class Node:
         try:
             with grpc.insecure_channel(f"{node_info['host']}:{node_info['port']}") as channel:
                 stub = Lms_pb2_grpc.RaftStub(channel)
-                response = stub.requestVote(Lms_pb2.RequestVoteRequest(**vote_request),timeout=0.3)
+                response = stub.requestVote(Lms_pb2.RequestVoteRequest(**vote_request),timeout=0.2)
                 return response.vote_granted, response.term
 
         except Exception as error:
@@ -353,7 +352,7 @@ class Node:
                         stub = Lms_pb2_grpc.RaftStub(channel)
 
                         # Send the AppendEntries request
-                        response = stub.appendEntries(Lms_pb2.AppendEntriesRequest(**log),timeout=0.3)
+                        response = stub.appendEntries(Lms_pb2.AppendEntriesRequest(**log),timeout=0.2)
                     success, term = response.success, response.term
                 except Exception as error:
                     return False,None
@@ -609,7 +608,7 @@ class Node:
             "leader_node":self.leader_node
         }
         cur.close()
-        # print(state_info)
+        print(state_info)
         return state_info
 
     # @synchronized_method("_lock")
