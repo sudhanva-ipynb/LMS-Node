@@ -240,7 +240,7 @@ class Node:
                             self.match_index = get_nxt_match_index(self.nodes, 0)
                             self.leader_append_entries()
                             return True
-                       
+
 
                 except Exception as exc:
                     print(f"RequestVote from {node['id']} generated an exception: {exc}")
@@ -259,7 +259,7 @@ class Node:
         try:
             with grpc.insecure_channel(f"{node_info['host']}:{node_info['port']}") as channel:
                 stub = Lms_pb2_grpc.RaftStub(channel)
-                response = stub.requestVote(Lms_pb2.RequestVoteRequest(**vote_request),timeout=0.1)
+                response = stub.requestVote(Lms_pb2.RequestVoteRequest(**vote_request),timeout=0.3)
                 return response.vote_granted, response.term
 
         except Exception as error:
@@ -353,7 +353,7 @@ class Node:
                         stub = Lms_pb2_grpc.RaftStub(channel)
 
                         # Send the AppendEntries request
-                        response = stub.appendEntries(Lms_pb2.AppendEntriesRequest(**log),timeout=0.1)
+                        response = stub.appendEntries(Lms_pb2.AppendEntriesRequest(**log),timeout=0.3)
                     success, term = response.success, response.term
                 except Exception as error:
                     return False,None
@@ -434,6 +434,10 @@ class Node:
                         if acks > ((len(nodes) + 1) // 2):
                             commit = True
                             break
+
+                # Shutdown the executor, canceling pending tasks if needed
+                executor.shutdown(cancel_futures=True)
+
             if commit:
                 return True  # Log replication succeeded with majority
             else:
@@ -605,7 +609,7 @@ class Node:
             "leader_node":self.leader_node
         }
         cur.close()
-        print(state_info)
+        # print(state_info)
         return state_info
 
     # @synchronized_method("_lock")
