@@ -19,8 +19,8 @@ from apscheduler.triggers.interval import IntervalTrigger
 from datetime import datetime, timedelta
 import logging
 
-logging.basicConfig()
-logging.getLogger('apscheduler').setLevel(logging.WARNING)
+# logging.basicConfig()
+# logging.getLogger('apscheduler').setLevel(logging.WARNING)
 def get_random_leader_timeout(node_id):
     # random.seed(node_id)
     return random.randint(400, 1000)
@@ -56,12 +56,12 @@ class MillisecondScheduler(BackgroundScheduler):
 
 class Timer:
     def __init__(self,node_id):
-        self.heartbeat_interval = 300
+        self.heartbeat_interval = 200
         self.leader_timeout = get_random_leader_timeout(node_id)
         self.scheduler = MillisecondScheduler()
         self.hb_job = self.scheduler.add_millisecond_job(self.heartbeat, milliseconds=self.heartbeat_interval,max_instances=10)
         self.lt_job = self.scheduler.add_millisecond_job(self.leader_timer, milliseconds=self.leader_timeout,max_instances=10)
-        self.last_hb_val = 0
+        self.last_hb_val = -1
         # self.scheduler.add_job()
         # self.next_idx = 0
         # self.last_commited = 0
@@ -708,7 +708,8 @@ class Node:
         self.commited_index = commited_index
         return commited_index
     def incr_heartbeat_tracker(self):
-        self.heartbeat_tracker = (self.heartbeat_tracker +1) % 1000
+        with self._lock:
+            self.heartbeat_tracker = (self.heartbeat_tracker +1) % 1000
     def get_heart_beat_tracker(self):
         return self.heartbeat_tracker
     # @synchronized_method("_lock")
