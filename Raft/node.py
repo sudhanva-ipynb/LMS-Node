@@ -23,7 +23,7 @@ logging.basicConfig()
 logging.getLogger('apscheduler').setLevel(logging.WARNING)
 def get_random_leader_timeout(node_id):
     # random.seed(node_id)
-    return random.randint(400, 900)
+    return random.randint(400, 1000)
 
 class MillisecondIntervalTrigger(IntervalTrigger):
     def __init__(self, milliseconds=1000, **kwargs):
@@ -72,11 +72,10 @@ class Timer:
         with sqlite3.connect("lms.db") as conn:
             state_info = node.get_state_info(conn)
             state = state_info["state"]
-
         if state == "L":
-            if node.get_heart_beat_tracker() % 50 == 0:
-                print(state_info)
             node.leader_append_entries()
+
+
     def leader_timer(self):
         with sqlite3.connect("lms.db") as conn:
             state_info = node.get_state_info(conn)
@@ -265,7 +264,7 @@ class Node:
         try:
             with grpc.insecure_channel(f"{node_info['host']}:{node_info['port']}") as channel:
                 stub = Lms_pb2_grpc.RaftStub(channel)
-                response = stub.requestVote(Lms_pb2.RequestVoteRequest(**vote_request),timeout=0.2)
+                response = stub.requestVote(Lms_pb2.RequestVoteRequest(**vote_request),timeout=0.3)
                 return response.vote_granted, response.term
 
         except Exception as error:
@@ -359,9 +358,10 @@ class Node:
                         stub = Lms_pb2_grpc.RaftStub(channel)
 
                         # Send the AppendEntries request
-                        response = stub.appendEntries(Lms_pb2.AppendEntriesRequest(**log),timeout=0.2)
+                        response = stub.appendEntries(Lms_pb2.AppendEntriesRequest(**log),timeout=0.3)
                     success, term = response.success, response.term
                 except Exception as error:
+                    print(error)
                     return False,None
                 if success:
                     if last_idx:
@@ -389,7 +389,7 @@ class Node:
 
                     return False,None
         except Exception as error:
-
+            print(error)
             return False,None
     def leader_append_entries(self):
         """
