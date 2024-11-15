@@ -72,9 +72,10 @@ class Timer:
         with sqlite3.connect("lms.db") as conn:
             state_info = node.get_state_info(conn)
             state = state_info["state"]
-            if node.get_heart_beat_tracker() % 30 == 0:
-                print(state_info)
+
         if state == "L":
+            if node.get_heart_beat_tracker() % 50 == 0:
+                print(state_info)
             node.leader_append_entries()
     def leader_timer(self):
         with sqlite3.connect("lms.db") as conn:
@@ -87,7 +88,7 @@ class Timer:
                 node.candidate_request_vote()
             else:
                 self.last_hb_val = hb_val
-                if hb_val % 30 == 0:
+                if hb_val % 50 == 0:
                     print(state_info)
     def start(self):
         print(f"My Leader Timeout is : {self.leader_timeout}")

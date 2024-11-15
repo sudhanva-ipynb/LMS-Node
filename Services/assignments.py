@@ -50,6 +50,9 @@ class AssignmentsService(Lms_pb2_grpc.AssignmentsServicer):
                     "data":base64.b64encode(data).decode("utf-8"),
                     "student_id":student_id
                 }
+                if node.leader_node != node.cur_node["id"]:
+                    context.set_code(grpc.StatusCode.UNAVAILABLE)
+                    return Lms_pb2.SubmitAssignmentResponse(error="", code="500")
                 res = node.leader_append_log(op,args)
                 if res:
                     error = submit_assignment(conn,student_id,course,assignment_name, data, filename)

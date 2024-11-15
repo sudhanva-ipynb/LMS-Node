@@ -40,7 +40,9 @@ class MaterialsService(Lms_pb2_grpc.MaterialsServicer):
                     "data": data,
                     "name": name
                 }
-
+                if node.leader_node != node.cur_node["id"]:
+                    context.set_code(grpc.StatusCode.UNAVAILABLE)
+                    return Lms_pb2.SubmitAssignmentResponse(error="", code="500")
                 res = node.leader_append_log(op, args)
                 if res:
                     result = upload(conn,course, data,filename,name)
