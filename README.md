@@ -1,7 +1,8 @@
 # LMS SERVER
 
 The server for the grpc enabled system. 
-
+ce4483a2-b7f4-4809-9ad9-446dc61dedc9 192.168.91.30        50050      2024-11-15 19:21:48
+5255f3d0-c8c7-463d-aaee-8d20a170ca6b 192.168.91.17        50050      2024-11-15 19:22:09
 ## Functions :
     1. Store Resources (Materials /Assignments)
     2. Provide Authentication/Authorization
