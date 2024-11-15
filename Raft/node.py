@@ -56,7 +56,7 @@ class MillisecondScheduler(BackgroundScheduler):
 
 class Timer:
     def __init__(self,node_id):
-        self.heartbeat_interval = 100
+        self.heartbeat_interval = 300
         self.leader_timeout = get_random_leader_timeout(node_id)
         self.scheduler = MillisecondScheduler()
         self.hb_job = self.scheduler.add_millisecond_job(self.heartbeat, milliseconds=self.heartbeat_interval,max_instances=10)
