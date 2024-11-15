@@ -240,9 +240,7 @@ class Node:
                             self.match_index = get_nxt_match_index(self.nodes, 0)
                             self.leader_append_entries()
                             return True
-                        else:
-                            self.set_state("F")
-                            return False
+                       
 
                 except Exception as exc:
                     print(f"RequestVote from {node['id']} generated an exception: {exc}")
