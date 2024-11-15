@@ -361,7 +361,7 @@ class Node:
                         response = stub.appendEntries(Lms_pb2.AppendEntriesRequest(**log),timeout=0.3)
                     success, term = response.success, response.term
                 except Exception as error:
-                    print(error)
+                    print(f"{node_info['host']}:{node_info['port']} : {error}")
                     return False,None
                 if success:
                     if last_idx:
