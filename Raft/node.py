@@ -22,8 +22,8 @@ import logging
 logging.basicConfig()
 logging.getLogger('apscheduler').setLevel(logging.WARNING)
 def get_random_leader_timeout(node_id):
-    random.seed(node_id)
-    return random.randint(600, 900)
+    # random.seed(node_id)
+    return random.randint(400, 1000)
 
 class MillisecondIntervalTrigger(IntervalTrigger):
     def __init__(self, milliseconds=1000, **kwargs):
