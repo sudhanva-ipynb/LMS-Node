@@ -389,7 +389,7 @@ class Node:
 
                     return False,None
         except Exception as error:
-            print(error)
+            print(f"{node_info['host']}:{node_info['port']} : {error}")
             return False,None
     def leader_append_entries(self):
         """
