@@ -14,7 +14,7 @@ import zipfile
 import random
 
 
-from llama_cpp import Llama
+# from llama_cpp import Llama
 
 
 from apscheduler.schedulers.background import BackgroundScheduler
