@@ -23,7 +23,7 @@ logging.basicConfig()
 logging.getLogger('apscheduler').setLevel(logging.WARNING)
 def get_random_leader_timeout(node_id):
     # random.seed(node_id)
-    return random.randint(400, 1000)
+    return random.randint(400, 900)
 
 class MillisecondIntervalTrigger(IntervalTrigger):
     def __init__(self, milliseconds=1000, **kwargs):
@@ -70,7 +70,10 @@ class Timer:
 
     def heartbeat(self):
         with sqlite3.connect("lms.db") as conn:
-            state = node.get_state_info(conn)["state"]
+            state_info = node.get_state_info(conn)
+            state = state_info["state"]
+            if self.last_hb_val % 30 == 0:
+                print(state_info)
         if state == "L":
             node.leader_append_entries()
     def leader_timer(self):
@@ -608,7 +611,7 @@ class Node:
             "leader_node":self.leader_node
         }
         cur.close()
-        print(state_info)
+
         return state_info
 
     # @synchronized_method("_lock")
