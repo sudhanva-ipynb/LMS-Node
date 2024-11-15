@@ -76,7 +76,7 @@ class Timer:
     def leader_timer(self):
         with sqlite3.connect("lms.db") as conn:
             state = node.get_state_info(conn)["state"]
-        if state == "F":
+        if state != "C":
             hb_val  = node.get_heart_beat_tracker()
             if self.last_hb_val == hb_val:
                 print("No Heartbeat Received")
