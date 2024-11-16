@@ -1,8 +1,12 @@
+import base64
+
 from Importers.common_imports import *
 from Importers.common_methods import *
 from Database.methods import *
 
 def add_file(path,filename,data):
+    if isinstance(data,str):
+        data = base64.b64decode(data.encode())
     try:
         if not os.path.exists(path):
             os.makedirs(path, exist_ok=True)

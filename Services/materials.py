@@ -1,3 +1,5 @@
+import base64
+import json
 from fileinput import filename
 
 from Importers.common_imports import *
@@ -37,7 +39,7 @@ class MaterialsService(Lms_pb2_grpc.MaterialsServicer):
                     "conn": "conn",
                     "course_id": course,
                     "filename": filename,
-                    "data": data,
+                    "data": base64.b64encode(data).decode("utf-8"),
                     "name": name
                 }
                 if node.leader_node != node.cur_node["id"]:
