@@ -61,6 +61,7 @@ class Timer:
         self.hb_job = self.scheduler.add_millisecond_job(self.heartbeat, milliseconds=self.heartbeat_interval,max_instances=10)
         self.lt_job = self.scheduler.add_millisecond_job(self.leader_timer, milliseconds=self.leader_timeout,max_instances=10)
         self.last_hb_val = -1
+        self.node_id =node_id
         # self.scheduler.add_job()
         # self.next_idx = 0
         # self.last_commited = 0
@@ -99,6 +100,7 @@ class Timer:
         self.scheduler.resume()
     def reset_lt(self):
         self.lt_job.remove()
+        self.leader_timeout = get_random_leader_timeout(node_id=self.node_id)
         self.lt_job = self.scheduler.add_millisecond_job(self.leader_timer, milliseconds=self.leader_timeout, max_instances=10)
     def reset_ht(self):
         self.hb_job.remove()
