@@ -19,8 +19,7 @@ from apscheduler.triggers.interval import IntervalTrigger
 from datetime import datetime, timedelta
 import logging
 
-# logging.basicConfig()
-# logging.getLogger('apscheduler').setLevel(logging.WARNING)
+
 def get_random_leader_timeout(node_id):
     # random.seed(node_id)
     return random.randint(400, 1000)
@@ -361,7 +360,7 @@ class Node:
                         response = stub.appendEntries(Lms_pb2.AppendEntriesRequest(**log),timeout=0.4)
                     success, term = response.success, response.term
                 except Exception as error:
-                    print(f"{node_info['host']}:{node_info['port']} : {error}")
+                    # print(f"{node_info['host']}:{node_info['port']} : {error}")
                     return False,None
                 if success:
                     if last_idx:
@@ -389,7 +388,7 @@ class Node:
 
                     return False,None
         except Exception as error:
-            print(f"{node_info['host']}:{node_info['port']} : {error}")
+            # print(f"{node_info['host']}:{node_info['port']} : {error}")
             return False,None
     def leader_append_entries(self):
         """

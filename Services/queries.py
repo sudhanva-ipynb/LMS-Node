@@ -21,7 +21,7 @@ class QueryService(Lms_pb2_grpc.QueriesServicer):
                 # conn, queryid, answer, user_id
                 if node.leader_node != node.cur_node["id"]:
                     context.set_code(grpc.StatusCode.UNAVAILABLE)
-                    return Lms_pb2.SubmitAssignmentResponse(error="", code="500")
+                    return Lms_pb2.SubmitAssignmentResponse(error="", code="502")
                 res = node.leader_append_log(op, args)
                 if res:
                     error = create_query(conn,course,query,kwargs["userid"])
@@ -63,7 +63,7 @@ class QueryService(Lms_pb2_grpc.QueriesServicer):
                 }
                 if node.leader_node != node.cur_node["id"]:
                     context.set_code(grpc.StatusCode.UNAVAILABLE)
-                    return Lms_pb2.SubmitAssignmentResponse(error="", code="500")
+                    return Lms_pb2.SubmitAssignmentResponse(error="", code="502")
                 res = node.leader_append_log(op, args)
                 if not res:
                     return Lms_pb2.UploadCourseMaterialResponse(error="Majority of nodes are down", code="500")
